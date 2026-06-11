@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, Phone, Calendar, MapPin, 
@@ -34,9 +34,10 @@ const Instagram = (props) => (
   </svg>
 );
 
-// Components
-import ParticleBackground from './components/ParticleBackground';
-import ContactForm from './components/ContactForm';
+// Lazy-loaded heavy components
+const ParticleBackground = lazy(() => import('./components/ParticleBackground'));
+const ContactForm = lazy(() => import('./components/ContactForm'));
+
 
 // Constants
 const CODING_PLATFORMS = [
@@ -81,7 +82,9 @@ export default function App() {
   return (
     <>
       {/* 3D R3F Particle field in the backdrop */}
-      <ParticleBackground />
+      <Suspense fallback={null}>
+        <ParticleBackground />
+      </Suspense>
 
       <main>
         {/* Sidebar Info Section */}
@@ -439,7 +442,9 @@ export default function App() {
               )}
 
               {activeTab === 'contact' && (
-                <ContactForm key="contact" />
+                <Suspense fallback={<div style={{textAlign:'center',padding:'40px',color:'var(--text-secondary)'}}>Loading...</div>}>
+                  <ContactForm key="contact" />
+                </Suspense>
               )}
             </AnimatePresence>
           </div>
